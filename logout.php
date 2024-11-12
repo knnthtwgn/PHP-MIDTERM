@@ -8,4 +8,5 @@ header("Pragma: no-cache");
 
 header("Location: index.php");
 exit;
+
 ?>

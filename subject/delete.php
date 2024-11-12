@@ -1,44 +1,32 @@
 <?php
-// Include necessary files (e.g., database connection, functions)
-include('../config.php'); // Assuming you have a config file for DB connection
+// delete.php - located in the "subject" folder
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['subjectId'])) {
+    $subjectId = $_POST['subjectId'];
+    // Code to delete the subject from the database goes here
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $studentId = $_POST['studentId'];
-
-    // Query to delete student
-    $sql = "DELETE FROM students WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$studentId]);
-
-    // Redirect to a page after deletion
-    header('Location: student-list.php');
+    // Redirect after deletion (change URL as needed)
+    header("Location: subject-list.php");
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Student</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Delete Subject</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="mb-4">Delete Student</h2>
-
-        <!-- Deletion Form -->
+        <h2 class="mb-4">Delete Subject</h2>
         <form method="POST" action="">
-            <div class="mb-3">
-                <label for="studentId" class="form-label">Student ID</label>
-                <input type="number" id="studentId" name="studentId" class="form-control" required>
-            </div>
-
-            <button type="submit" class="btn btn-danger">Delete Student</button>
+            <input type="hidden" name="subjectId" value="<?php echo htmlspecialchars($_GET['subjectId'] ?? ''); ?>">
+            <p>Are you sure you want to delete this subject?</p>
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="subject-list.php" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

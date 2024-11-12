@@ -1,11 +1,12 @@
-<?php 
+<?php
+    include('header.php');
 ?>
-<div class="container">
-    <h2>Welcome to the System: <?php echo htmlspecialchars(getUserEmail()); ?></h2>
-
-
-    <a href="logout.php" class="btn btn-danger logout-btn">Logout</a>
-
+    <br>
+    <div class="container d-flex justify-content-between align-items-center col-md-7">
+        <h4 class="fs-3 fw-bold">Welcome to the System:</h4>
+        <button onclick="window.location.href='logout.php'" class="btn btn-danger">Logout</button>
+    </div>
+    <br><br>
     <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card">
@@ -27,16 +28,13 @@
                 <div class="card-body">
                     <p>This section allows you to register a new student in the system. Click the button below to proceed with the registration process.</p>
 
-                    <a href="" class="btn btn-primary">Register New Student</a>
+                    <a href="student/register.php" class="btn btn-primary">Register</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    
 
 <?php
-include("footer.php");  
+include 'footer.php'; 
 ?>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>

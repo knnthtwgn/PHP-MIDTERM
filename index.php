@@ -23,7 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validate email and password
     if (empty($email)) {
         $errors[] = "Email is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email.";
     }
+    
     if (empty($password)) {
         $errors[] = "Password is required.";
     }
@@ -46,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <main>
     <div class="container">
         <?php if (!empty($errors) || !empty($notification)): ?>
-            <div class="col-md-6 mb-3 mx-auto">
+            <div class="col-md-4 mb-3 mx-auto mt-4">
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>System Errors:</strong>
                     <ul>
@@ -73,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" name="password" class="form-control" id="password" placeholder="Password">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        </div class="mb-">
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
                     </div>
                 </div>
             </div>

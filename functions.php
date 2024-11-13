@@ -1,53 +1,35 @@
 <?php
 
+// Sample users data
 function getUsers() {
     return [
-        ["email" => "ken@gmail.com", "password" => "user1"],
-        ["email" => "alice@gmail.com", "password" => "user2"],
-        ["email" => "peter@gmail.com", "password" => "user3"],
-        ["email" => "bob@gmail.com", "password" => "user4"],
-        ["email" => "jake@gmail.com", "password" => "user5"]
+        ["email" => "user1@gmail.com", "password" => "user1"],
+        ["email" => "user2@gmail.com", "password" => "user2"],
+        ["email" => "user3@gmail.com", "password" => "user3"],
+        ["email" => "user4@gmail.com", "password" => "user4"],
+        ["email" => "user5@gmail.com", "password" => "user5"]
     ];
 }
 
+// Validate login credentials
 function validateLoginCredentials($email, $password) {
     $errors = [];
 
-    // Validate email
+    // Check for empty fields and email format
     if (empty($email)) {
         $errors[] = "Email is required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid Email";
+        $errors[] = "Invalid Email format.";
     }
 
-    // Validate password
     if (empty($password)) {
         $errors[] = "Password is required.";
-    }
-
-    // Check if email exists
-    if (empty($errors)) {
-        $users = getUsers();
-        $emailExists = false;
-
-        // Check if the email is in the users list
-        foreach ($users as $user) {
-            if ($user['email'] === $email) {
-                $emailExists = true;
-                break;
-            }
-        }
-
-        if (!$emailExists) {
-            $errors[] = "Invalid Email.";
-        }
     }
 
     return $errors;
 }
 
-?>
-<?php
+// Check if the email and password match any user in the list
 function checkLoginCredentials($email, $password, $users) {
     foreach ($users as $user) {
         if ($user['email'] === $email && $user['password'] === $password) {
@@ -57,26 +39,14 @@ function checkLoginCredentials($email, $password, $users) {
     return false;
 }
 
-function checkUserSessionIsActive() {
-    if (isset($_SESSION['email']) && basename($_SERVER['PHP_SELF']) == 'index.php') {
-        header("Location: dashboard.php");
-        exit;
-    }
-}
-function guard() {
-    if (empty($_SESSION['email']) && basename($_SERVER['PHP_SELF']) != 'index.php') {
-        
-        header("Location: index.php"); 
-        exit;
-    }
-}
+// Display errors as a bulleted list
 function displayErrors($errors) {
-
-    $output = "<ul>";
+    $output = "<ul class='mb-0'>";
     foreach ($errors as $error) {
-        $output .= "<li>" . htmlspecialchars($error) . "</li>";
+        $output .= "<li>• " . htmlspecialchars($error) . "</li>";
     }
     $output .= "</ul>";
     return $output;
 }
+
 ?>

@@ -1,15 +1,16 @@
 <?php
-    session_start();
-    include('header.php');
-    
-    // Check if the user is logged in
-    if (!isset($_SESSION['email'])) {
-        // Redirect to login if not logged in
-        header("Location: index.php");
-        exit;
-    }
-    
-    $userEmail = $_SESSION['email'];
+session_start();
+$pageTitle = "Dashboard";  // Set the page title to "Dashboard"
+include('header.php');
+
+// Check if the user is logged in
+if (!isset($_SESSION['email'])) {
+    // Redirect to login if not logged in
+    header("Location: index.php");
+    exit;
+}
+
+$userEmail = $_SESSION['email'];
 ?>
 <br>
 <div class="container d-flex justify-content-between align-items-center col-md-8">
@@ -42,6 +43,4 @@
     </div>
 </div>
 
-<?php
-include 'footer.php'; 
-?>
+<?php include 'footer.php'; ?>

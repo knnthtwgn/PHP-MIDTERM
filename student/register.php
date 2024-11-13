@@ -123,40 +123,47 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
         </form>
     </div>
     
+    
     <!-- Student List -->
-    <div class="card mt-4 p-4">
-        <h5>Student List</h5>
-        <table class="table table-bordered mt-3">
-            <thead>
+<div class="card mt-4 p-4">
+    <h5>Student List</h5>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Option</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (empty($_SESSION['students'])): ?>
                 <tr>
-                    <th>Student ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Option</th>
+                    <td colspan="4" class="text-center">No student records found.</td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($_SESSION['students'])): ?>
+            <?php else: ?>
+                <?php foreach ($_SESSION['students'] as $index => $student): ?>
                     <tr>
-                        <td colspan="4" class="text-center">No student records found.</td>
+                        <td><?php echo htmlspecialchars($student['id']); ?></td>
+                        <td><?php echo htmlspecialchars($student['first_name']); ?></td>
+                        <td><?php echo htmlspecialchars($student['last_name']); ?></td>
+                        <td>
+                            <!-- Link the edit button -->
+                            <a href="edit.php?id=<?php echo $student['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
+                            
+                            <!-- Link the delete button with index -->
+                            <a href="delete.php?index=<?php echo $index; ?>" class="btn btn-danger btn-sm">Delete</a>
+                            
+                            <!-- Link the attach subject button with student ID -->
+                            <a href="attach-student.php?id=<?php echo $student['id']; ?>" class="btn btn-sm btn-success">Attach Subject</a>
+                        </td>
                     </tr>
-                <?php else: ?>
-                    <?php foreach ($_SESSION['students'] as $student): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($student['id']); ?></td>
-                            <td><?php echo htmlspecialchars($student['first_name']); ?></td>
-                            <td><?php echo htmlspecialchars($student['last_name']); ?></td>
-                            <td>
-                                <a href="edit.php?id=<?php echo $student['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
-                                <a href="register.php?action=delete&id=<?php echo $student['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
-                                <a href="attach-student.php?id=<?php echo $student['id']; ?>" class="btn btn-sm btn-secondary">Attach Subject</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
 </div>
 
 <!-- Bootstrap JS and dependencies -->

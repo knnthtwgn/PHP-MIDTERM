@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <td>
                                     <!-- Edit and Delete buttons -->
                                     <a href="edit.php?index=<?php echo $index; ?>" class="btn btn-success btn-edit">Edit</a>
-                                    <a href="?delete=<?php echo $index; ?>" class="btn btn-danger btn-delete">Delete</a>
+                                    <a href="delete.php?index=<?php echo $index; ?>" class="btn btn-danger btn-delete">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -44,3 +44,4 @@ $userEmail = $_SESSION['email'];
 </div>
 
 <?php include 'footer.php'; ?>
+

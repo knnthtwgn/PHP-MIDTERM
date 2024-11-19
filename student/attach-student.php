@@ -13,7 +13,7 @@ if ($studentID) {
         if ($s['id'] === $studentID) {
             $student = $s;
             // Ensure that the 'subjects' key is set for the student
-            if (!isset($student['subjects'])) {
+            if (!isset($student['subjects']) || !is_array($student['subjects'])) {
                 $student['subjects'] = [];  // Initialize subjects as an empty array if not set
             }
             break;
@@ -33,11 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Attach the subjects to the student in session
             foreach ($_SESSION['students'] as $key => $s) {
                 if ($s['id'] === $studentID) {
-                    // Ensure the 'subjects' key exists for the student before using array_merge
-                    if (!isset($_SESSION['students'][$key]['subjects'])) {
-                        $_SESSION['students'][$key]['subjects'] = [];  // Initialize subjects as empty array
+                    // Ensure subjects key is properly initialized
+                    if (!isset($_SESSION['students'][$key]['subjects']) || !is_array($_SESSION['students'][$key]['subjects'])) {
+                        $_SESSION['students'][$key]['subjects'] = [];
                     }
-                    $_SESSION['students'][$key]['subjects'] = array_merge($_SESSION['students'][$key]['subjects'], $selectedSubjects);  // Add selected subjects
+
+                    // Merge selected subjects with existing subjects
+                    $_SESSION['students'][$key]['subjects'] = array_unique(array_merge($_SESSION['students'][$key]['subjects'], $selectedSubjects));
                     break;
                 }
             }
@@ -57,7 +59,7 @@ if (isset($_GET['remove_subject']) && isset($_GET['subject_code'])) {
     // Remove the subject from the student's attached subjects
     foreach ($_SESSION['students'] as $key => $s) {
         if ($s['id'] === $studentID) {
-            $_SESSION['students'][$key]['subjects'] = array_diff($_SESSION['students'][$key]['subjects'], [$subjectCode]);
+            $_SESSION['students'][$key]['subjects'] = array_values(array_diff($_SESSION['students'][$key]['subjects'], [$subjectCode]));
             break;
         }
     }
@@ -68,15 +70,9 @@ if (isset($_GET['remove_subject']) && isset($_GET['subject_code'])) {
 // Fetch the student's attached subjects
 $attachedSubjects = $student ? $student['subjects'] : [];
 
-// Available subjects to attach
-$subjectNames = [
-    "1001" => "English",
-    "1002" => "Mathematics",
-    "1003" => "Science"
-];
+// Fetch available subjects from session
+$availableSubjects = isset($_SESSION['subjects']) ? $_SESSION['subjects'] : [];
 
-// Filter the subjects that are not yet attached
-$availableSubjects = array_diff(array_keys($subjectNames), $attachedSubjects);
 ?>
 
 <!DOCTYPE html>
@@ -119,21 +115,28 @@ $availableSubjects = array_diff(array_keys($subjectNames), $attachedSubjects);
             <li>• <strong>Student ID:</strong> <?php echo $student['id']; ?></li>
             <li>• <strong>Name:</strong> <?php echo $student['first_name'] . ' ' . $student['last_name']; ?></li>
         </ul>
-        
+
         <!-- Horizontal Divider Line -->
         <hr>
 
         <!-- Subject Selection Checkboxes -->
-        <?php if (empty($availableSubjects)): ?>
+        <?php
+        // Get subjects that are not yet attached to the student
+        $subjectsToAttach = array_filter($availableSubjects, function ($subject) use ($attachedSubjects) {
+            return !in_array($subject['subjectCode'], $attachedSubjects);
+        });
+        ?>
+
+        <?php if (empty($subjectsToAttach)): ?>
             <p>No subjects available to attach.</p>
         <?php else: ?>
             <form action="attach-student.php?id=<?php echo $studentID; ?>" method="POST">
                 <div class="form-group">
-                    <?php foreach ($availableSubjects as $subjectCode): ?>
+                    <?php foreach ($subjectsToAttach as $subject): ?>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="subjects[]" value="<?php echo $subjectCode; ?>" id="subject<?php echo $subjectCode; ?>">
-                            <label class="form-check-label" for="subject<?php echo $subjectCode; ?>">
-                                <?php echo $subjectCode . " - " . $subjectNames[$subjectCode]; ?>
+                            <input class="form-check-input" type="checkbox" name="subjects[]" value="<?php echo $subject['subjectCode']; ?>" id="subject<?php echo $subject['subjectCode']; ?>">
+                            <label class="form-check-label" for="subject<?php echo $subject['subjectCode']; ?>">
+                                <?php echo htmlspecialchars($subject['subjectCode'] . " - " . $subject['subjectName']); ?>
                             </label>
                         </div>
                     <?php endforeach; ?>
@@ -160,14 +163,22 @@ $availableSubjects = array_diff(array_keys($subjectNames), $attachedSubjects);
                     <tr><td colspan="3" class="text-center">No subject attached.</td></tr>
                 <?php else: ?>
                     <?php foreach ($attachedSubjects as $subjectCode): ?>
+                        <?php
+                            // Find subject details
+                            $subjectName = '';
+                            foreach ($availableSubjects as $subject) {
+                                if ($subject['subjectCode'] === $subjectCode) {
+                                    $subjectName = $subject['subjectName'];
+                                    break;
+                                }
+                            }
+                        ?>
                         <tr>
-                            <td><?php echo $subjectCode; ?></td>
-                            <td><?php echo isset($subjectNames[$subjectCode]) ? $subjectNames[$subjectCode] : "Unknown Subject"; ?></td>
+                            <td><?php echo htmlspecialchars($subjectCode); ?></td>
+                            <td><?php echo htmlspecialchars($subjectName); ?></td>
                             <td>
-                                <!-- Detach Subject Button (Bootstrap btn-danger style) -->
                                 <a href="attach-student.php?id=<?php echo $studentID; ?>&remove_subject=true&subject_code=<?php echo $subjectCode; ?>" 
-                                   class="btn btn-danger btn-sm">
-                                   Detach Subject
+                                   class="btn btn-danger btn-sm">Detach Subject
                                 </a>
                             </td>
                         </tr>

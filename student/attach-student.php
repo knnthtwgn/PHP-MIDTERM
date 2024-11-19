@@ -53,26 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Handle subject removal
-if (isset($_GET['remove_subject']) && isset($_GET['subject_code'])) {
-    $subjectCode = $_GET['subject_code'];
-    // Remove the subject from the student's attached subjects
-    foreach ($_SESSION['students'] as $key => $s) {
-        if ($s['id'] === $studentID) {
-            $_SESSION['students'][$key]['subjects'] = array_values(array_diff($_SESSION['students'][$key]['subjects'], [$subjectCode]));
-            break;
-        }
-    }
-    header("Location: attach-student.php?id=$studentID"); // Redirect after removal
-    exit;
-}
-
 // Fetch the student's attached subjects
 $attachedSubjects = $student ? $student['subjects'] : [];
 
 // Fetch available subjects from session
 $availableSubjects = isset($_SESSION['subjects']) ? $_SESSION['subjects'] : [];
-
 ?>
 
 <!DOCTYPE html>
@@ -177,8 +162,9 @@ $availableSubjects = isset($_SESSION['subjects']) ? $_SESSION['subjects'] : [];
                             <td><?php echo htmlspecialchars($subjectCode); ?></td>
                             <td><?php echo htmlspecialchars($subjectName); ?></td>
                             <td>
-                                <a href="attach-student.php?id=<?php echo $studentID; ?>&remove_subject=true&subject_code=<?php echo $subjectCode; ?>" 
-                                   class="btn btn-danger btn-sm">Detach Subject
+                                <!-- Updated Detach Subject Button Link -->
+                                <a href="dettach-subject.php?id=<?php echo $studentID; ?>&subject_code=<?php echo $subjectCode; ?>" 
+                                   class="btn btn-danger btn-sm">Dettach Subject
                                 </a>
                             </td>
                         </tr>
